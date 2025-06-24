@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Category;
+use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\ProductImage;
+use Illuminate\Support\Facades\Log;
+
+class ProductController extends Controller
+{
+    public function store(Request $request)
+    {
+        try {
+            // Debug: log dos dados recebidos
+            Log::info('=== DADOS RECEBIDOS ===');
+            Log::info('All data:', $request->all());
+            Log::info('Files:', $request->allFiles());
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:100',
+                'price' => 'required|numeric',
+                'stock' => 'required|integer',
+                'discount' => 'nullable|integer',
+                'description' => 'nullable|string',
+                'category_id' => 'required|exists:categories,id',
+                'new_prod' => 'nullable|boolean',
+                'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Especifique os tipos
+            ]);
+
+            Log::info('=== DADOS VALIDADOS ===');
+            Log::info('Validated data:', $validated);
+
+            $product = Product::create([
+                'name' => $validated['name'],
+                'price' => $validated['price'],
+                'stock' => $validated['stock'],
+                'discount' => $validated['discount'] ?? 0,
+                'description' => $validated['description'] ?? '',
+                'category_id' => $validated['category_id'],
+                'new_prod' => $request->has('new_prod'),
+            ]);
+
+            Log::info('=== PRODUTO CRIADO ===');
+            Log::info('Product ID: ' . $product->id);
+
+            // Processar imagens
+            if ($request->hasFile('images')) {
+                Log::info('=== PROCESSANDO IMAGENS ===');
+                $images = $request->file('images');
+                Log::info('Número de imagens: ' . count($images));
+
+                foreach ($images as $index => $image) {
+                    Log::info("Processando imagem {$index}: " . $image->getClientOriginalName());
+                    Log::info("Tamanho: " . $image->getSize() . " bytes");
+                    Log::info("Tipo: " . $image->getMimeType());
+
+                    // Verificar se o arquivo é válido
+                    if (!$image->isValid()) {
+                        Log::error("Imagem {$index} inválida: " . $image->getErrorMessage());
+                        continue;
+                    }
+
+                    try {
+                        $path = $image->store('public/products');
+                        $imageUrl = str_replace('public/', 'storage/', $path);
+
+                        ProductImage::create([
+                            'product_id' => $product->id,
+                            'image_url' => $imageUrl,
+                        ]);
+
+                        Log::info("Imagem {$index} salva em: " . $path);
+                        Log::info("URL da imagem: " . $imageUrl);
+                    } catch (\Exception $e) {
+                        Log::error("Erro ao salvar imagem {$index}: " . $e->getMessage());
+                    }
+                }
+            } else {
+                Log::info('Nenhuma imagem foi enviada');
+            }
+
+            return response()->json([
+                'message' => 'Produto cadastrado com sucesso!',
+                'product_id' => $product->id
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('=== ERRO DE VALIDAÇÃO ===');
+            Log::error('Validation errors:', $e->errors());
+            
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('=== ERRO GERAL ===');
+            Log::error('Error message:', $e->getMessage());
+            Log::error('Error trace:', $e->getTraceAsString());
+            
+            return response()->json([
+                'message' => 'Erro interno do servidor: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function create()
+    {
+        $categories = Category::all();
+        return view('add-products', compact('categories'));
+    }
+    
+}

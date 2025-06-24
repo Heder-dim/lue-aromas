@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,19 +10,22 @@ Route::get('/', function () {
 Route::get('/admin', function () {
     return view('admin');
 });
-Route::get('/admin/add-products', function () {
-    return view('add-products');
-})->name('add-products');
-Route::get('/admin/view-products', function () {
+Route::get('/products/add-products', [ProductController::class, 'create'])->name('add-products');
+
+Route::get('/products/view-products', function () {
     return view('view-products');
 })->name('view-products');
-Route::get('/admin/edit-products', function () {
+Route::get('/products/edit-products', function () {
     return view('edit-products');
 })->name('edit-products');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
