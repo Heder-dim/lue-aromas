@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('dashboard');
 });
-Route::get('/admin', function () {
-    return view('admin');
-});
+
 Route::get('/products/add-products', [ProductController::class, 'create'])->name('add-products');
 
 Route::get('/products/view-products', function () {

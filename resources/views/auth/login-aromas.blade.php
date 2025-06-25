@@ -9,8 +9,8 @@
 <body>
 @include('layouts.navigation')
         
-<div class="min-h-screen flex flex-col items-center justify-center bg-white px-4">
-    <h1 class="text-4xl font-bold text-[#d09a50] mb-8">Login</h1>
+<div class=" flex flex-col items-center justify-center bg-white px-4">
+    <h1 class="text-4xl font-bold text-[#d09a50] mb-8 mt-8">Login</h1>
 
     @if ($errors->any())
         <div class="mb-4 text-red-600">
@@ -52,7 +52,7 @@
 
             <button
                 type="submit"
-                class="mt-4 bg-[#d09a50] text-white font-medium py-2 px-4 rounded hover:bg-[#bb8642] transition"
+                class="mt-4 bg-[#d09a50] text-white cursor-pointer font-medium py-2 px-4 rounded hover:bg-[#bb8642] transition"
             >
                 Entrar
             </button>

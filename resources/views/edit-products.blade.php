@@ -53,7 +53,19 @@
 
         <div class="flex flex-col">
         <label class="text-[#a24d17] font-medium mb-1">Imagens (adicionais):</label>
-        <input type="file" name="images[]" accept="image/*" multiple class="file:bg-[#a24d17] file:text-white rounded border border-[#a24d17]">
+        <input
+          type="file" name="images[]"
+          accept="image/*"
+          multiple
+          class="rounded-l-full file:mr-4 file:py-2 file:px-4
+                file:rounded-l-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-[#a24d17] file:text-white
+                file:cursor-pointer
+                hover:file:bg-[#823d13]
+                 text-gray-700 rounded border border-[#a24d17] cursor-pointer
+                focus:outline-none focus:ring-2 focus:ring-[#c7902f]"
+        />
         <div class="mt-2 flex gap-2 flex-wrap">
             @foreach ($product->images as $image)
             <img src="{{ asset($image->image_url) }}" alt="Imagem" class="w-20 h-20 object-cover rounded">

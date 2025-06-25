@@ -34,6 +34,8 @@ document.getElementById("form-product").addEventListener("submit", async functio
 
         if (response.ok) {
             alert(data.message);
+            const viewProductsUrl = document.querySelector('meta[name="route-view-products"]').getAttribute('content');
+            window.location.href = viewProductsUrl;
             form.reset();
         } else {
             console.error(data);

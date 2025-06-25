@@ -20,8 +20,8 @@
         <!-- Navegação -->
         <nav class="flex space-x-8 text-[#8a3a17] font-regular text-lg cursor-pointer">
             <a href="/dashboard" class="hover:underline hover:font-medium">Início</a>
-            <a href="/view-products" class="hover:underline hover:font-medium">Produtos</a>
-            <a href="#" class="hover:underline hover:font-medium">Sobre</a>
+            <a href="" class="hover:underline hover:font-medium">Produtos</a>
+            <a href="#" class="hover:underline hover:font-medium">Sobre</a> 
             <a href="#" class="hover:underline hover:font-medium">Fale Conosco</a>
         </nav>
 
@@ -30,7 +30,7 @@
             @auth
                 <span>Olá, {{ Auth::user()->name }}</span>
 
-                <a href="/admin" class="bg-[#a75824] text-white px-4 py-2 rounded hover:bg-[#8a3a17] transition">
+                <a href="{{ route('view-products') }}" class="bg-[#a75824] text-white px-4 py-2 rounded hover:bg-[#8a3a17] transition">
                     Gerenciar
                 </a>
 

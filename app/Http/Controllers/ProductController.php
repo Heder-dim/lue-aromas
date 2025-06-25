@@ -137,9 +137,56 @@ class ProductController extends Controller
         return view('add-products', compact('categories'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('images')->paginate(6);
+        $query = Product::with('images');
+
+        // Filtro por nome
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        // Filtro por preço mínimo
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        // Filtro por preço máximo
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Filtro por desconto mínimo
+        if ($request->filled('min_discount')) {
+            $query->where('discount', '>=', $request->min_discount);
+        }
+
+        // Filtro por desconto máximo
+        if ($request->filled('max_discount')) {
+            $query->where('discount', '<=', $request->max_discount);
+        }
+
+        // Ordenação
+        $sortBy = $request->get('sort', 'name'); // padrão: ordenar por nome
+        $sortOrder = $request->get('order', 'asc'); // padrão: ordem crescente
+
+        $allowedSorts = ['name', 'price', 'discount', 'created_at'];
+        if (in_array($sortBy, $allowedSorts)) {
+            $query->orderBy($sortBy, $sortOrder);
+        } else {
+            $query->orderBy('name', 'asc');
+        }
+
+        $products = $query->paginate(6)->appends($request->query());
+
+        // Para requisições AJAX, retornar apenas os produtos
+        if ($request->ajax()) {
+            return response()->json([
+                'products' => view('partials.products-grid', compact('products'))->render(),
+                'pagination' => $products->links()->render()
+            ]);
+        }
+
         return view('view-products', compact('products'));
     }
     
@@ -169,49 +216,48 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    try {
-        $product = Product::findOrFail($id);
+    {
+        try {
+            $product = Product::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'discount' => 'nullable|integer',
-            'description' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+            $validated = $request->validate([
+                'name' => 'required|string|max:100',
+                'price' => 'required|numeric',
+                'stock' => 'required|integer',
+                'discount' => 'nullable|integer',
+                'description' => 'nullable|string',
+                'category_id' => 'required|exists:categories,id',
+                'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $product->update([
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-            'stock' => $validated['stock'],
-            'discount' => $validated['discount'] ?? 0,
-            'description' => $validated['description'] ?? '',
-            'category_id' => $validated['category_id'],
-        ]);
+            $product->update([
+                'name' => $validated['name'],
+                'price' => $validated['price'],
+                'stock' => $validated['stock'],
+                'discount' => $validated['discount'] ?? 0,
+                'description' => $validated['description'] ?? '',
+                'category_id' => $validated['category_id'],
+            ]);
 
-        if ($request->hasFile('images') && is_array($request->file('images'))) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('public/products');
-                $imageUrl = str_replace('public/', 'storage/', $path);
+            if ($request->hasFile('images') && is_array($request->file('images'))) {
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('public/products');
+                    $imageUrl = str_replace('public/', 'storage/', $path);
 
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_url' => $imageUrl,
-                ]);
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_url' => $imageUrl,
+                    ]);
+                }
             }
+
+            return response()->json(['success' => true, 'message' => 'Produto atualizado com sucesso.']);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+            ], 422);
         }
-
-        return response()->json(['success' => true, 'message' => 'Produto atualizado com sucesso.']);
-
-    } catch (ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'errors' => $e->errors(),
-        ], 422);
     }
-}
-
 }
