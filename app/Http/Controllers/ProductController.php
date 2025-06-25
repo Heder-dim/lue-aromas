@@ -16,7 +16,6 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
-            // Debug: log dos dados recebidos
             Log::info('=== DADOS RECEBIDOS ===');
             Log::info('All data:', $request->all());
             Log::info('Files:', $request->allFiles());
@@ -48,19 +47,16 @@ class ProductController extends Controller
             Log::info('=== PRODUTO CRIADO ===');
             Log::info('Product ID: ' . $product->id);
 
-            // Processar imagens
             if ($request->hasFile('images')) {
                 Log::info('=== PROCESSANDO IMAGENS ===');
                 $images = $request->file('images');
                 Log::info('Número de imagens: ' . count($images));
                 Log::info('Tipo de dados images: ' . gettype($images));
                 
-                // Verificar se images é um array ou um único arquivo
                 if (!is_array($images)) {
-                    $images = [$images]; // Converter para array se for um único arquivo
+                    $images = [$images];
                 }
 
-                // Filtrar arquivos duplicados ou inválidos
                 $processedHashes = [];
 
                 foreach ($images as $index => $image) {
@@ -69,7 +65,6 @@ class ProductController extends Controller
                         continue;
                     }
 
-                    // Criar hash do arquivo para detectar duplicatas
                     $fileHash = md5($image->getClientOriginalName() . $image->getSize() . $image->getMimeType());
                     
                     if (in_array($fileHash, $processedHashes)) {
@@ -85,10 +80,8 @@ class ProductController extends Controller
                     Log::info("Hash: " . $fileHash);
 
                     try {
-                        // Salvar a imagem
                         $path = $image->store('products', 'public');
                         
-                        // A URL correta para salvar no banco
                         $imageUrl = 'storage/' . $path;
 
                         ProductImage::create([
@@ -166,9 +159,8 @@ class ProductController extends Controller
             $query->where('discount', '<=', $request->max_discount);
         }
 
-        // Ordenação
-        $sortBy = $request->get('sort', 'name'); // padrão: ordenar por nome
-        $sortOrder = $request->get('order', 'asc'); // padrão: ordem crescente
+        $sortBy = $request->get('sort', 'name'); 
+        $sortOrder = $request->get('order', 'asc'); 
 
         $allowedSorts = ['name', 'price', 'discount', 'created_at'];
         if (in_array($sortBy, $allowedSorts)) {
@@ -179,11 +171,11 @@ class ProductController extends Controller
 
         $products = $query->paginate(6)->appends($request->query());
 
-        // Para requisições AJAX, retornar apenas os produtos
+        Log::info('=== PRODUTOS CONSULTADOS ===');
         if ($request->ajax()) {
             return response()->json([
                 'products' => view('partials.products-grid', compact('products'))->render(),
-                'pagination' => $products->links()->render()
+                'pagination' => (string) $products->links()
             ]);
         }
 
@@ -193,17 +185,12 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-
-        // Exclui imagens
         foreach ($product->images as $image) {
-            // Remove 'storage/' para acessar o arquivo no disco
             $filePath = str_replace('storage/', '', $image->image_url);
             Storage::disk('public')->delete($filePath);
             $image->delete();
         }
-
         $product->delete();
-
         return response()->json(['success' => true]);
     }
 
@@ -229,7 +216,6 @@ class ProductController extends Controller
                 'category_id' => 'required|exists:categories,id',
                 'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-
             $product->update([
                 'name' => $validated['name'],
                 'price' => $validated['price'],
@@ -238,7 +224,6 @@ class ProductController extends Controller
                 'description' => $validated['description'] ?? '',
                 'category_id' => $validated['category_id'],
             ]);
-
             if ($request->hasFile('images') && is_array($request->file('images'))) {
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('public/products');
@@ -250,9 +235,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
-
             return response()->json(['success' => true, 'message' => 'Produto atualizado com sucesso.']);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,

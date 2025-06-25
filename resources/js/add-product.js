@@ -17,10 +17,6 @@ document.getElementById("form-product").addEventListener("submit", async functio
         // Usando as meta tags
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const storeUrl = document.querySelector('meta[name="products-store-url"]').getAttribute('content');
-        
-        // Ou usando as variáveis globais
-        // const csrfToken = window.Laravel.csrfToken;
-        // const storeUrl = window.Laravel.routes.productsStore;
 
         const response = await fetch(storeUrl, {
             method: "POST",

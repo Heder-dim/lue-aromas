@@ -225,7 +225,6 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Remover o produto da página
                             e.target.closest('.bg-white').remove();
                             alert('Produto excluído com sucesso!');
                         } else {
@@ -242,6 +241,5 @@
             attachDeleteListeners();
         });
     </script>
-
 </body>
 </html>
