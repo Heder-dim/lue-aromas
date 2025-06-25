@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+
 
 class ProductController extends Controller
 {
@@ -157,4 +159,59 @@ class ProductController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function edit($id)
+    {
+        $product = Product::with('images')->findOrFail($id);
+        $categories = Category::all();
+
+        return view('edit-products', compact('product', 'categories'));
+    }
+
+    public function update(Request $request, $id)
+{
+    try {
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+            'discount' => 'nullable|integer',
+            'description' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $product->update([
+            'name' => $validated['name'],
+            'price' => $validated['price'],
+            'stock' => $validated['stock'],
+            'discount' => $validated['discount'] ?? 0,
+            'description' => $validated['description'] ?? '',
+            'category_id' => $validated['category_id'],
+        ]);
+
+        if ($request->hasFile('images') && is_array($request->file('images'))) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('public/products');
+                $imageUrl = str_replace('public/', 'storage/', $path);
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url' => $imageUrl,
+                ]);
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Produto atualizado com sucesso.']);
+
+    } catch (ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'errors' => $e->errors(),
+        ], 422);
+    }
+}
+
 }

@@ -22,14 +22,6 @@
             </a>
         </div>
 
-        <!-- Editar -->
-        <div>
-            <p class="mb-2">Editar produto existente:</p>
-            <a href="{{ route('edit-products') }}" class="bg-[#a75824] text-white px-6 py-2 rounded hover:bg-[#8a3a17] transition">
-                Editar produto
-            </a>
-        </div>
-
         <!-- Listar/Excluir -->
         <div>
             <p class="mb-2">Listar/Excluir produto:</p>

@@ -40,8 +40,8 @@
 
                     <!-- Ações -->
                     <div class="p-4 border-t flex justify-center gap-4">
-                        <a href="{{ route('edit-products', ['id' => $product->id]) }}"
-                           class="text-yellow-600 border border-yellow-600 px-5 py-1 rounded hover:bg-yellow-100 transition font-medium">
+                        <a href="{{ route('edit-products', $product->id) }}"
+                            class="text-yellow-600 border border-yellow-600 px-4 py-1 rounded hover:bg-yellow-100 transition">
                             Editar
                         </a>
                         <button data-id="{{ $product->id }}"
