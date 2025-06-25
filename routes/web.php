@@ -15,6 +15,7 @@ Route::get('/products/add-products', [ProductController::class, 'create'])->name
 Route::get('/products/view-products', function () {
     return view('view-products');
 })->name('view-products');
+
 Route::get('/products/edit-products', function () {
     return view('edit-products');
 })->name('edit-products');
@@ -24,7 +25,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
-Route::post('/products/store', [ProductController::class, 'store'])->name('products.store');
+Route::get('/products/view-products', [ProductController::class, 'index'])->name('view-products');
+Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+
 
 
 Route::middleware('auth')->group(function () {

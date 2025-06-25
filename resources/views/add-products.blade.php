@@ -41,14 +41,6 @@
         <label class="text-[#a24d17] font-medium mb-1">Desconto(%):</label>
         <input type="number" placeholder="Porcentagem de desconto" class="p-2 rounded border border-[#a24d17] focus:outline-none focus:ring-2 focus:ring-[#c7902f]" name="discount"/>
       </div>
-
-      <!-- Lançamento e Desconto -->
-      <!-- <div class="flex items-center gap-6">
-        <label class="flex items-center text-[#a24d17] font-medium">
-          Lançamento?
-          <input type="radio" name="new_prod" class="ml-2" />
-        </label>
-      </div> -->
       
       <!-- Categoria -->
       <div class="flex flex-col">
