@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @vite('resources/css/app.css')
+    <title>Luê Aromas</title>
+</head>
+<body>
+    
 <header class="flex items-center justify-between px-[200px] py-4 shadow-sm border-b max">
         <!-- Logo -->
         <div class="flex items-center space-x-2 cursor-pointer">
@@ -9,8 +19,8 @@
 
         <!-- Navegação -->
         <nav class="flex space-x-8 text-[#8a3a17] font-regular text-lg cursor-pointer">
-            <a href="#" class="hover:underline hover:font-medium">Início</a>
-            <a href="/products" class="hover:underline hover:font-medium">Produtos</a>
+            <a href="/dashboard" class="hover:underline hover:font-medium">Início</a>
+            <a href="/view-products" class="hover:underline hover:font-medium">Produtos</a>
             <a href="#" class="hover:underline hover:font-medium">Sobre</a>
             <a href="#" class="hover:underline hover:font-medium">Fale Conosco</a>
         </nav>
@@ -40,7 +50,13 @@
                 <a href="/login-aromas" class="bg-[#a75824] text-white px-4 py-2 rounded hover:bg-[#8a3a17] transition">
                     Login
                 </a>
-                <a href="/register" class="hover:text-[#8a3a17]">Registrar</a>
+                <a href="/register" class="hover:text-[#8a3a17] hover:underline">Registrar</a>
             @endauth
         </div>
     </header>
+
+    <div class="container mx-auto px-4">
+        @yield('content') {{-- This is where your page content will be injected --}}
+    </div>
+</body>
+</html>

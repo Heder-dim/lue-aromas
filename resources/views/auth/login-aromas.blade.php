@@ -52,10 +52,12 @@
 
             <button
                 type="submit"
-                class="mt-4 bg-[#d09a50] text-white font-medium py-2 rounded hover:bg-[#bb8642] transition"
+                class="mt-4 bg-[#d09a50] text-white font-medium py-2 px-4 rounded hover:bg-[#bb8642] transition"
             >
                 Entrar
             </button>
+            <div class="mt-4 text-center">
+                <a href="{{ route('register') }}" class="text-[#d09a50] hover:underline">Não tem uma conta? Cadastre-se</a>
         </form>
     </div>
 </div>

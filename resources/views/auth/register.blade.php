@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite('resources/css/app.css')
-    <title>Luê Aromas</title>
-</head>
-<body>
-@extends('layouts.navigation') 
-<div></div>
+@extends('layouts.navigation')
 
-<div class="min-h-screen flex flex-col items-center justify-center bg-white px-4">
-    <h1 class="text-4xl font-bold text-[#d09a50] mb-8">Registro</h1>
+@section('content') {{-- Start of the content section --}}
+<div class="flex flex-col items-center justify-center bg-white px-4">
+    <h1 class="text-4xl font-bold text-[#d09a50] mb-8 mt-8">Registro</h1>
 
     @if ($errors->any())
         <div class="mb-4 text-red-600">
@@ -27,7 +18,6 @@
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
-            <!-- Email -->
             <div class="text-center mb-4">
                 <label for="email" class="block text-lg font-medium text-black mb-2">E-mail</label>
                 <input
@@ -41,7 +31,6 @@
                 />
             </div>
 
-            <!-- Nome -->
             <div class="text-center mb-4">
                 <label for="name" class="block text-lg font-medium text-black mb-2">Nome</label>
                 <input
@@ -55,7 +44,6 @@
                 />
             </div>
 
-            <!-- Senha -->
             <div class="text-center mb-4">
                 <label for="password" class="block text-lg font-medium text-black mb-2">Senha</label>
                 <input
@@ -68,7 +56,6 @@
                 />
             </div>
 
-            <!-- Confirmar Senha -->
             <div class="text-center mb-6">
                 <label for="password_confirmation" class="block text-lg font-medium text-black mb-2">Confirmar Senha</label>
                 <input
@@ -88,9 +75,14 @@
                 >
                     Registrar
                 </button>
+                <div>
+                    <p class="mt-4 text-sm text-gray-600">
+                        Já tem uma conta? 
+                        <a href="{{ route('login-aromas') }}" class="text-[#a75824] hover:underline">Faça login</a>
+                    </p>
+                </div>
             </div>
         </form>
     </div>
 </div>
-</body>
-</html>
+@endsection {{-- End of the content section --}}

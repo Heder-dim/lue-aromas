@@ -24,9 +24,9 @@
 
         <!-- Listar/Excluir -->
         <div>
-            <p class="mb-2">Listar/Excluir produto:</p>
+            <p class="mb-2">Gerenciar Produtos existentes:</p>
             <a href="{{ route('view-products') }}" class="bg-[#a75824] text-white px-6 py-2 rounded hover:bg-[#8a3a17] transition">
-                Vizualizar ou excluir produtos
+                Vizualizar/editar/excluir produtos
             </a>
         </div>
     </div>
