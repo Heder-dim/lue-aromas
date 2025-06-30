@@ -28,6 +28,7 @@ Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('pr
 
 Route::get('/products/edit-products/{id}', [ProductController::class, 'edit'])->name('edit-products');
 Route::post('/products/update/{id}', [ProductController::class, 'update'])->name('products.update');
+Route::delete('/products/image/{id}', [ProductController::class, 'deleteImage'])->name('products.image.delete');
 
 
 

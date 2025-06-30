@@ -29,7 +29,8 @@
 
           
         } else {
-            messageDiv.textContent = 'Erro ao atualizar o produto.';
+            let errors = data.errors ? Object.values(data.errors).flat().join('\n') : 'Erro ao atualizar o produto.';
+            messageDiv.textContent = errors;
             messageDiv.classList.add('text-red-600');
             messageDiv.classList.remove('text-green-600');
         }
@@ -42,3 +43,32 @@
       });
     });
   });
+
+  document.querySelectorAll('button[data-image-id]').forEach(button => {
+    button.addEventListener('click', function () {
+        const imageId = this.dataset.imageId;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        if (confirm('Deseja realmente remover esta imagem?')) {
+            fetch(`/products/image/${imageId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.closest('.group').remove(); // remove o <div> com a imagem
+                } else {
+                    alert('Erro ao remover imagem.');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Erro ao remover imagem.');
+            });
+        }
+    });
+});

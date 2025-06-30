@@ -226,8 +226,8 @@ class ProductController extends Controller
             ]);
             if ($request->hasFile('images') && is_array($request->file('images'))) {
                 foreach ($request->file('images') as $image) {
-                    $path = $image->store('public/products');
-                    $imageUrl = str_replace('public/', 'storage/', $path);
+                    $path = $image->store('products', 'public');   
+                    $imageUrl = 'storage/' . $path;
 
                     ProductImage::create([
                         'product_id' => $product->id,
@@ -243,4 +243,17 @@ class ProductController extends Controller
             ], 422);
         }
     }
+    public function deleteImage($id)
+{
+    try {
+        $image = ProductImage::findOrFail($id);
+        $filePath = str_replace('storage/', '', $image->image_url);
+        Storage::disk('public')->delete($filePath);
+        $image->delete();
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Erro ao excluir imagem.']);
+    }
+}
 }

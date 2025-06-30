@@ -66,11 +66,18 @@
                  text-gray-700 rounded border border-[#a24d17] cursor-pointer
                 focus:outline-none focus:ring-2 focus:ring-[#c7902f]"
         />
-        <div class="mt-2 flex gap-2 flex-wrap">
-            @foreach ($product->images as $image)
-            <img src="{{ asset($image->image_url) }}" alt="Imagem" class="w-20 h-20 object-cover rounded">
-            @endforeach
-        </div>
+            <div class="mt-2 flex gap-2 flex-wrap">
+                @foreach ($product->images as $image)
+                <div class="relative group">
+                    <img src="{{ asset($image->image_url) }}" alt="Imagem" class="w-20 h-20 object-cover rounded" />
+                    <button type="button"
+                            data-image-id="{{ $image->id }}"
+                            class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 py-0.5 rounded-full hidden group-hover:block hover:bg-red-700 transition">
+                        ✕
+                    </button>
+                </div>
+                @endforeach
+            </div>
         </div>
 
         <div class="flex flex-col">
@@ -79,7 +86,7 @@
         </div>
 
         <div class="flex justify-end">
-        <button type="submit" class="bg-[#a24d17] text-white px-6 py-2 rounded-xl hover:bg-[#823d13] transition-all">
+        <button type="submit" class="bg-[#a24d17] text-white px-6 py-2 mt-4 rounded-xl hover:bg-[#823d13] transition-all">
             Salvar Alterações
         </button>
         </div>
